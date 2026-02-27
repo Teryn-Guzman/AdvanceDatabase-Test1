@@ -282,3 +282,5 @@ func (a *applicationDependencies) listCustomersHandler(
 		a.serverErrorResponse(w, r, err)
 	}
 }
+
+

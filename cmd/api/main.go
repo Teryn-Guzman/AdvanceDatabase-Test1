@@ -22,6 +22,12 @@ type serverConfig struct {
         dsn string
     }
 
+     limiter struct {
+        rps float64                      // requests per second
+        burst int                        // initial requests possible
+        enabled bool                     // enable or disable rate limiter
+    }
+
 }
 
 type applicationDependencies struct {

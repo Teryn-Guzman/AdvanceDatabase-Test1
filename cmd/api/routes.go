@@ -20,6 +20,7 @@ func (a *applicationDependencies)routes() http.Handler  {
    router.HandlerFunc(http.MethodDelete,"/v1/customers/:id", a.deleteCustomerHandler)
    router.HandlerFunc(http.MethodGet,"/v1/customers", a.listCustomersHandler)
 
-   return router
-  
+   // Request sent first to recoverPanic() then sent to rateLimit()
+    // finally it is sent to the router.
+    return a.recoverPanic(a.rateLimit(router))  
 }
