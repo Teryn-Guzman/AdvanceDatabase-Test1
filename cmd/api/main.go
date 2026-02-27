@@ -43,6 +43,16 @@ func main() {
                   "Environment(development|staging|production)")
     flag.StringVar(&settings.db.dsn, "db-dsn", "postgres://restaurant:restaurant@localhost/restaurant_management_db","PostgreSQL DSN")
 
+    flag.Float64Var(&settings.limiter.rps, "limiter-rps", 2,
+                  "Rate Limiter maximum requests per second")
+
+    flag.IntVar(&settings.limiter.burst, "limiter-burst", 5,
+                  "Rate Limiter maximum burst")
+
+    flag.BoolVar(&settings.limiter.enabled, "limiter-enabled", true,
+                  "Enable rate limiter")
+
+
     flag.Parse()
     
     logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
