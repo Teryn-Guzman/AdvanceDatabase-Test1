@@ -6,10 +6,9 @@ import (
 	"github.com/Teryn-Guzman/Lab-3/internal/validator"
 )
 
-// The Filters type will contain the fields related to pagination
-// and eventually the fields related to sorting.
+//Filters struct will hold the pagination and sorting information
 type Filters struct {
-    Page   int         // which page number does the client want
+    Page   int         // which page number 
     PageSize  int      // how records per page
     Sort string
     SortSafeList  []string     // allowed sort fields
@@ -24,16 +23,12 @@ type Metadata struct {
 }
 
 
-// Next we validate page and PageSize
-// We follow the same approach that we used to validate a Comment
 func ValidateFilters(v *validator.Validator, f Filters) {
    v.Check(f.Page > 0, "page", "must be greater than zero")
    v.Check(f.Page <= 500, "page", "must be a maximum of 500")
    v.Check(f.PageSize > 0, "page_size", "must be greater than zero")
    v.Check(f.PageSize <= 100, "page_size", "must be a maximum of 100")
 
-    // Check if sort fields provided are valid
-    // We will implement PermittedValue() later
     v.Check(validator.PermittedValue(f.Sort, f.SortSafeList...), "sort",
                                     "invalid sort value")
 
@@ -46,8 +41,6 @@ func (f Filters) sortColumn() string {
             return strings.TrimPrefix(f.Sort, "-")
         }
     }
-   // don't allow the operation to continue
-   // if case of SQL injection attack
    panic("unsafe sort parameter: " + f.Sort)
 }
 
@@ -65,8 +58,7 @@ func (f Filters) limit() int {
     return f.PageSize
 }
 
-// calculate the offset so that we remember how many records have
-// been sent and how many remain to be sent
+// calculate the offset so that we remember how many records have been sent and how many remain to be sent
 func (f Filters) offset() int {
     return (f.Page - 1) * f.PageSize
 }
