@@ -25,11 +25,12 @@ func (a *applicationDependencies)serve() error {
 
 	shutdownError := make(chan error)
 	go func() {
-      quit := make(chan os.Signal, 1)  // receive the shutdown signal
-      signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM) // signal occurred
-      s := <-quit   // blocks until a signal is received
+      quit := make(chan os.Signal, 1)  
+      signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM) 
+      s := <-quit  
       // message about shutdown in process
       a.logger.Info("shutting down server", "signal", s.String())
+      
      // create a context
      ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
      defer cancel()
