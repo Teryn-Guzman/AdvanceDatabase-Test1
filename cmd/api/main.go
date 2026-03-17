@@ -40,6 +40,14 @@ type applicationDependencies struct {
     config serverConfig
     logger *slog.Logger
     customerModel data.CustomerModel
+    tableModel data.TableModel
+    shiftModel data.ShiftModel
+    timeSlotModel data.TimeSlotModel
+    reservationModel data.ReservationModel
+    reservationTableAssignmentModel data.ReservationTableAssignmentModel
+    specialRequestModel data.SpecialRequestModel
+    waitstaffModel data.WaitstaffModel
+    shiftTableAssignmentModel data.ShiftTableAssignmentModel
 }
 func main() {
     var settings serverConfig
@@ -99,6 +107,14 @@ func main() {
         config: settings,
         logger: logger,
         customerModel: data.CustomerModel{DB: db},
+        tableModel: data.TableModel{DB: db},
+        shiftModel: data.ShiftModel{DB: db},
+        timeSlotModel: data.TimeSlotModel{DB: db},
+        reservationModel: data.ReservationModel{DB: db},
+        reservationTableAssignmentModel: data.ReservationTableAssignmentModel{DB: db},
+        specialRequestModel: data.SpecialRequestModel{DB: db},
+        waitstaffModel: data.WaitstaffModel{DB: db},
+        shiftTableAssignmentModel: data.ShiftTableAssignmentModel{DB: db},
     }
 
 
