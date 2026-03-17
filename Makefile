@@ -10,7 +10,7 @@ run/api:
 	-env=development \
 	-limiter-burst=5 \
 	-limiter-rps=2 \
-	-limiter-enabled=false \
+	-limiter-enabled=true \
 	-db-dsn=${RESTAURANT_DB_DSN} \
 	-cors-trusted-origins="http://localhost:9000 http://localhost:9001"
 
