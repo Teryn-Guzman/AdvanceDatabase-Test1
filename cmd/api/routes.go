@@ -22,5 +22,5 @@ func (a *applicationDependencies)routes() http.Handler  {
 
    // Request sent first to recoverPanic() then sent to rateLimit()
     // finally it is sent to the router.
-    return a.recoverPanic(a.rateLimit(router))  
+        return a.recoverPanic(a.rateLimit(a.enableCORS(router)))  
 }

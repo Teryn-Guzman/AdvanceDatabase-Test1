@@ -80,3 +80,25 @@ return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 })
 
 }
+
+func (a *applicationDependencies) enableCORS (next http.Handler) http.Handler {                             
+   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Add the Vary header to prevent caching of the CORS response
+        w.Header().Add("Vary", "Origin")
+        origin := r.Header.Get("Origin")
+
+        // Check if the Origin header is present and if it matches any of the trusted origins
+        if origin != "" {
+            for i := range a.config.cors.trustedOrigins {
+               if origin == a.config.cors.trustedOrigins[i] {
+                 w.Header().Set("Access-Control-Allow-Origin", origin)                                          
+                  break
+        }
+   }
+}
+
+
+        next.ServeHTTP(w, r)
+    })
+}
+

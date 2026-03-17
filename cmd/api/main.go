@@ -6,6 +6,7 @@ import (
 	"flag"
 	"log/slog"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/Teryn-Guzman/Lab-3/internal/data"
@@ -25,6 +26,11 @@ type serverConfig struct {
         burst int                        // initial requests possible
         enabled bool                     // enable or disable rate limiter
     }
+
+    cors struct {
+        trustedOrigins []string
+    }
+
 
 }
 
@@ -49,6 +55,12 @@ func main() {
 
     flag.BoolVar(&settings.limiter.enabled, "limiter-enabled", true,
                   "Enable rate limiter")
+
+    flag.Func("cors-trusted-origins", "Trusted CORS origins (space separated)",
+              func(val string) error {
+                   settings.cors.trustedOrigins = strings.Fields(val)
+                   return nil
+              })
 
 
     flag.Parse()
