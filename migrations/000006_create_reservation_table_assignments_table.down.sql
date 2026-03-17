@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS reservation_table_assignments;
