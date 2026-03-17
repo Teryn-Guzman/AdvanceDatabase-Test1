@@ -85,13 +85,29 @@ func (a *applicationDependencies) enableCORS (next http.Handler) http.Handler {
    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         // Add the Vary header to prevent caching of the CORS response
         w.Header().Add("Vary", "Origin")
+        w.Header().Add("Vary", "Access-Control-Request-Method")
+
         origin := r.Header.Get("Origin")
 
         // Check if the Origin header is present and if it matches any of the trusted origins
         if origin != "" {
             for i := range a.config.cors.trustedOrigins {
                if origin == a.config.cors.trustedOrigins[i] {
-                 w.Header().Set("Access-Control-Allow-Origin", origin)                                          
+                 w.Header().Set("Access-Control-Allow-Origin", origin)  
+
+                 //check if the request is a preflight request
+                 if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
+                    w.Header().Set("Access-Control-Allow-Methods",
+                             "OPTIONS, PUT, PATCH, DELETE")
+                    w.Header().Set("Access-Control-Allow-Headers",
+                             "Authorization, Content-Type")
+        
+                    // For preflight requests, we respond with a 200 OK status and return without calling the next handler
+                    w.WriteHeader(http.StatusOK)
+                    return
+                } 
+
+                                        
                   break
         }
    }
