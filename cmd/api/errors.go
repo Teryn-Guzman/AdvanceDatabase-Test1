@@ -72,6 +72,8 @@ func (a *applicationDependencies)failedValidationResponse(
 // send an error response if rate limit exceeded (429 - Too Many Requests)
 func (a *applicationDependencies)rateLimitExceededResponse(w http.ResponseWriter, r *http.Request)  {
 
+    // Set Retry-After header with seconds until the client can retry
+    w.Header().Set("Retry-After", "1")
     message := "rate limit exceeded"
     a.errorResponseJSON(w, r, http.StatusTooManyRequests, message)
 }

@@ -32,7 +32,7 @@ func (a *applicationDependencies)serve() error {
       a.logger.Info("shutting down server", "signal", s.String())
       
      // create a context
-     ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+     ctx, cancel := context.WithTimeout(context.Background(), time.Duration(a.config.shutdownTimeout)*time.Second)
      defer cancel()
 	 shutdownError <- apiServer.Shutdown(ctx)
     }()

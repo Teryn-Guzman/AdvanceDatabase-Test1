@@ -6,13 +6,13 @@ include .envrc
 run/api:
 	@echo  'Running application…'
 	@go run ./cmd/api \
-	-port=4000 \
-	-env=development \
-	-limiter-burst=5 \
-	-limiter-rps=2 \
-	-limiter-enabled=true \
+	-port=${PORT} \
+	-env=${ENVIRONMENT} \
+	-limiter-burst=${RATE_LIMITER_BURST} \
+	-limiter-rps=${RATE_LIMITER_RPS} \
+	-limiter-enabled=${RATE_LIMITER_ENABLED} \
 	-db-dsn=${RESTAURANT_DB_DSN} \
-	-cors-trusted-origins="http://localhost:9000 http://localhost:9001"
+	-cors-trusted-origins="${CORS_TRUSTED_ORIGINS}"
 
 ## db/psql: connect to the database using psql (terminal)
 .PHONY: db/psql
