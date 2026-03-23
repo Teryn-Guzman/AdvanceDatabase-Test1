@@ -1,6 +1,7 @@
 package main
 
 import (
+	"compress/gzip"
 	"expvar"
 	"fmt"
 	"net"
@@ -130,15 +131,20 @@ func (a *applicationDependencies) enableCORS (next http.Handler) http.Handler {
 
 func (a *applicationDependencies) metrics (next http.Handler) http.Handler {                             
    // Setup our variable to track the metrics
- var (
+  var (
       totalRequestsReceived = expvar.NewInt("total_requests_received")
       totalResponsesSent    = expvar.NewInt("total_responses_sent")
       totalProcessingTimeMicroseconds = expvar.NewInt("total_processing_time_μs")
       totalResponsesSentByStatus = expvar.NewMap("total_responses_sent_by_status")
- )
- 
- return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    // start is when we receive the request and start processing it
+      totalRequestsByRoute = expvar.NewMap("total_requests_by_route")
+      totalErrors = expvar.NewInt("total_errors")
+      averageLatencyMicroseconds = expvar.NewFloat("average_latency_μs")
+      requestCountForAverage int64 = 0
+      muAverage sync.Mutex
+  )
+  
+  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+     // start is when we receive the request and start processing it
         start := time.Now()
         // update our request received counter
         totalRequestsReceived.Add(1)
@@ -152,11 +158,29 @@ func (a *applicationDependencies) metrics (next http.Handler) http.Handler {
 
         totalResponsesSentByStatus.Add(strconv.Itoa(mw.statusCode), 1)
 
+        // Track requests per route
+        route := r.Method + " " + r.URL.Path
+        totalRequestsByRoute.Add(route, 1)
+
+        // Track error counts (4xx and 5xx responses)
+        if mw.statusCode >= 400 {
+            totalErrors.Add(1)
+        }
+
         // duration is the time it took to process the request in microseconds
         duration := time.Since(start).Microseconds()
         
         // update our total processing time counter
         totalProcessingTimeMicroseconds.Add(duration)
+
+        // Calculate running average latency
+        muAverage.Lock()
+        requestCountForAverage++
+        // Welford's online algorithm for running average
+        currentAvg := averageLatencyMicroseconds.Value()
+        newAvg := currentAvg + (float64(duration) - currentAvg) / float64(requestCountForAverage)
+        averageLatencyMicroseconds.Set(newAvg)
+        muAverage.Unlock()
     })
 }
 
@@ -165,6 +189,65 @@ func newMetricsResponseWriter(w http.ResponseWriter) *metricsResponseWriter {
         wrapped: w,
         statusCode: http.StatusOK,
     }
+}
+
+// compressResponseWriter wraps the response writer to compress the output using gzip
+type compressResponseWriter struct {
+    wrapped http.ResponseWriter
+    gzipWriter *gzip.Writer
+}
+
+func (a *applicationDependencies) compress(next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Check if the client accepts gzip encoding
+        if !stringsContains(r.Header.Values("Accept-Encoding"), "gzip") {
+            next.ServeHTTP(w, r)
+            return
+        }
+
+        // Create a gzip writer
+        gzipWriter, err := gzip.NewWriterLevel(w, gzip.BestSpeed)
+        if err != nil {
+            next.ServeHTTP(w, r)
+            return
+        }
+        defer gzipWriter.Close()
+
+        // Set the Content-Encoding header
+        w.Header().Set("Content-Encoding", "gzip")
+        // Add Vary header to indicate that the response varies based on Accept-Encoding
+        w.Header().Add("Vary", "Accept-Encoding")
+
+        // Wrap the response writer with our gzip writer
+        crw := &compressResponseWriter{
+            wrapped:    w,
+            gzipWriter: gzipWriter,
+        }
+
+        next.ServeHTTP(crw, r)
+    })
+}
+
+// Helper function to check if a slice contains a string
+func stringsContains(slice []string, str string) bool {
+    for _, s := range slice {
+        if s == str {
+            return true
+        }
+    }
+    return false
+}
+
+func (crw *compressResponseWriter) Header() http.Header {
+    return crw.wrapped.Header()
+}
+
+func (crw *compressResponseWriter) Write(b []byte) (int, error) {
+    return crw.gzipWriter.Write(b)
+}
+
+func (crw *compressResponseWriter) WriteHeader(statusCode int) {
+    crw.wrapped.WriteHeader(statusCode)
 }
 
 func (mw *metricsResponseWriter) Header() http.Header {

@@ -77,9 +77,10 @@ func (a *applicationDependencies)routes() http.Handler  {
    router.HandlerFunc(http.MethodDelete, "/v1/shift-table-assignments", a.deleteShiftTableAssignmentHandler)
    router.HandlerFunc(http.MethodGet, "/v1/shift-table-assignments/list", a.listShiftTableAssignmentsHandler)
    
-   router.Handler(http.MethodGet,"/v1/observability/customers/metrics", expvar.Handler())
+    router.Handler(http.MethodGet,"/v1/observability/customers/metrics", expvar.Handler())
 
-   // Request sent first to recoverPanic() then sent to rateLimit()
-    // finally it is sent to the router.
-    return  a.metrics(a.recoverPanic(a.enableCORS(a.rateLimit(router))))
+    // Request sent first to recoverPanic() then sent to rateLimit()
+     // finally it is sent to the router.
+     // Compression is applied last (outermost) so it compresses the final response
+     return  a.metrics(a.recoverPanic(a.enableCORS(a.rateLimit(a.compress(router)))))
 }

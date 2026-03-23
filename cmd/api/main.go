@@ -33,7 +33,7 @@ type serverConfig struct {
         trustedOrigins []string
     }
 
-
+    shutdownTimeout int                      // timeout in seconds for graceful shutdown
 }
 
 type applicationDependencies struct {
@@ -70,12 +70,15 @@ func main() {
               func(val string) error {
                    settings.cors.trustedOrigins = strings.Fields(val)
                    return nil
-              })
+               })
+
+    flag.IntVar(&settings.shutdownTimeout, "shutdown-timeout", 30,
+                  "Graceful shutdown timeout in seconds")
 
 
     flag.Parse()
     
-    logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+    logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
     db, err := openDB(settings)
     if err != nil {
