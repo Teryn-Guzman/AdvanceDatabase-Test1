@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Teryn-Guzman/Lab-3/internal/validator"
+	"github.com/lib/pq"
 )
 
 type CustomerModel struct {
@@ -43,12 +44,22 @@ func (m CustomerModel) Insert(customer *Customer) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	return m.DB.QueryRowContext(ctx, query, args...).Scan(
+	err := m.DB.QueryRowContext(ctx, query, args...).Scan(
 		&customer.ID,
 		&customer.CreatedAt,
 		&customer.NoShowCount,
 		&customer.PenaltyFlag,
 	)
+
+	if err != nil {
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+			return ErrDuplicateEmail
+		}
+		return err
+	}
+
+	return nil
 }
 func (m CustomerModel) Get(id int64) (*Customer, error) {
 

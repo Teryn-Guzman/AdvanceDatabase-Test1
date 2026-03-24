@@ -153,7 +153,12 @@ go run ./cmd/api \
 ### Health Check
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/v1/healthcheck` | Check API health status |
+| GET | `/v1/health` | Check API health status |
+
+### Observability
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/v1/observability/customers/metrics` | Customer-related metrics (expvar) |
 
 ### Customers
 | Method | Endpoint | Description |
@@ -161,7 +166,7 @@ go run ./cmd/api \
 | GET | `/v1/customers` | List all customers |
 | GET | `/v1/customers/:id` | Get customer by ID |
 | POST | `/v1/customers` | Create new customer |
-| PUT | `/v1/customers/:id` | Update customer |
+| PATCH | `/v1/customers/:id` | Update customer |
 | DELETE | `/v1/customers/:id` | Delete customer |
 
 ### Tables
@@ -170,7 +175,7 @@ go run ./cmd/api \
 | GET | `/v1/tables` | List all tables |
 | GET | `/v1/tables/:id` | Get table by ID |
 | POST | `/v1/tables` | Create new table |
-| PUT | `/v1/tables/:id` | Update table |
+| PATCH | `/v1/tables/:id` | Update table |
 | DELETE | `/v1/tables/:id` | Delete table |
 
 ### Shifts
@@ -179,17 +184,17 @@ go run ./cmd/api \
 | GET | `/v1/shifts` | List all shifts |
 | GET | `/v1/shifts/:id` | Get shift by ID |
 | POST | `/v1/shifts` | Create new shift |
-| PUT | `/v1/shifts/:id` | Update shift |
+| PATCH | `/v1/shifts/:id` | Update shift |
 | DELETE | `/v1/shifts/:id` | Delete shift |
 
 ### Time Slots
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/v1/timeslots` | List all time slots |
-| GET | `/v1/timeslots/:id` | Get time slot by ID |
-| POST | `/v1/timeslots` | Create new time slot |
-| PUT | `/v1/timeslots/:id` | Update time slot |
-| DELETE | `/v1/timeslots/:id` | Delete time slot |
+| GET | `/v1/time-slots` | List all time slots |
+| GET | `/v1/time-slots/:id` | Get time slot by ID |
+| POST | `/v1/time-slots` | Create new time slot |
+| PATCH | `/v1/time-slots/:id` | Update time slot |
+| DELETE | `/v1/time-slots/:id` | Delete time slot |
 
 ### Reservations
 | Method | Endpoint | Description |
@@ -197,7 +202,7 @@ go run ./cmd/api \
 | GET | `/v1/reservations` | List all reservations |
 | GET | `/v1/reservations/:id` | Get reservation by ID |
 | POST | `/v1/reservations` | Create new reservation |
-| PUT | `/v1/reservations/:id` | Update reservation |
+| PATCH | `/v1/reservations/:id` | Update reservation |
 | DELETE | `/v1/reservations/:id` | Delete reservation |
 
 ### Waitstaff
@@ -206,35 +211,34 @@ go run ./cmd/api \
 | GET | `/v1/waitstaff` | List all waitstaff |
 | GET | `/v1/waitstaff/:id` | Get waitstaff by ID |
 | POST | `/v1/waitstaff` | Create new waitstaff |
-| PUT | `/v1/waitstaff/:id` | Update waitstaff |
+| PATCH | `/v1/waitstaff/:id` | Update waitstaff |
 | DELETE | `/v1/waitstaff/:id` | Delete waitstaff |
 
 ### Special Requests
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/v1/specialrequests` | List all special requests |
-| GET | `/v1/specialrequests/:id` | Get special request by ID |
-| POST | `/v1/specialrequests` | Create new special request |
-| PUT | `/v1/specialrequests/:id` | Update special request |
-| DELETE | `/v1/specialrequests/:id` | Delete special request |
+| GET | `/v1/special-requests` | List all special requests |
+| GET | `/v1/special-requests/:id` | Get special request by ID |
+| POST | `/v1/special-requests` | Create new special request |
+| PATCH | `/v1/special-requests/:id` | Update special request |
+| DELETE | `/v1/special-requests/:id` | Delete special request |
 
 ### Reservation Table Assignments
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/v1/reservationtableassignments` | List all assignments |
-| GET | `/v1/reservationtableassignments/:id` | Get assignment by ID |
-| POST | `/v1/reservationtableassignments` | Create new assignment |
-| PUT | `/v1/reservationtableassignments/:id` | Update assignment |
-| DELETE | `/v1/reservationtableassignments/:id` | Delete assignment |
+| GET | `/v1/reservation-table-assignments` | Get assignment by reservation and table |
+| GET | `/v1/reservation-table-assignments/list` | List all assignments |
+| POST | `/v1/reservation-table-assignments` | Create new assignment |
+| DELETE | `/v1/reservation-table-assignments` | Delete assignment by reservation and table |
 
 ### Shift Table Assignments
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/v1/shifttableassignments` | List all assignments |
-| GET | `/v1/shifttableassignments/:id` | Get assignment by ID |
-| POST | `/v1/shifttableassignments` | Create new assignment |
-| PUT | `/v1/shifttableassignments/:id` | Update assignment |
-| DELETE | `/v1/shifttableassignments/:id` | Delete assignment |
+| GET | `/v1/shift-table-assignments` | Get assignment by shift and table |
+| GET | `/v1/shift-table-assignments/list` | List all assignments |
+| POST | `/v1/shift-table-assignments` | Create new assignment |
+| PATCH | `/v1/shift-table-assignments` | Update assignment |
+| DELETE | `/v1/shift-table-assignments` | Delete assignment |
 
 ## Database Schema
 

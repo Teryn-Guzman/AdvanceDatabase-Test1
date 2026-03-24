@@ -77,3 +77,9 @@ func (a *applicationDependencies)rateLimitExceededResponse(w http.ResponseWriter
     message := "rate limit exceeded"
     a.errorResponseJSON(w, r, http.StatusTooManyRequests, message)
 }
+
+// send an error response if there's a conflict (409 - Conflict)
+func (a *applicationDependencies)editConflictResponse(w http.ResponseWriter, r *http.Request) {
+	message := "a customer with this email already exists"
+	a.errorResponseJSON(w, r, http.StatusConflict, message)
+}

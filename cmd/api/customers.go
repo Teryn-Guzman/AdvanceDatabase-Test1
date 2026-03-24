@@ -43,7 +43,12 @@ func (a *applicationDependencies) createCustomerHandler(
 
 	err = a.customerModel.Insert(&customer)
 	if err != nil {
-		a.serverErrorResponse(w, r, err)
+		switch {
+		case errors.Is(err, data.ErrDuplicateEmail):
+			a.editConflictResponse(w, r)
+		default:
+			a.serverErrorResponse(w, r, err)
+		}
 		return
 	}
 

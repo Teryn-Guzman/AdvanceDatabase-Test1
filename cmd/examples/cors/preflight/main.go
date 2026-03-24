@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// We will access the POST /v1/tokens/authentication endpoint
+// We will access the POST /v1/ endpoint
 const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +18,7 @@ const html = `
     <div id="output"></div>
     <script>
          document.addEventListener('DOMContentLoaded', function() {
-         fetch("http://localhost:4000/v1/customers", {
+         fetch("http://localhost:4000/v1/health", {
            method: "POST",
            headers: {
                     'Content-Type': 'application/json'
@@ -26,7 +26,7 @@ const html = `
            body: JSON.stringify({
                     first_name: 'John',
                     last_name: 'Doe',
-                    email: 'john@example.com'
+                    email: 'john2@example.com'
                  })
            }).then( function(response) {
    response.text().then(function (text) {

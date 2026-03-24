@@ -106,10 +106,10 @@ func (a *applicationDependencies) enableCORS (next http.Handler) http.Handler {
                if origin == a.config.cors.trustedOrigins[i] {
                  w.Header().Set("Access-Control-Allow-Origin", origin)  
 
-                 //check if the request is a preflight request
-                 if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
-                    w.Header().Set("Access-Control-Allow-Methods",
-                             "OPTIONS, PUT, PATCH, DELETE")
+                //check if the request is a preflight request
+                  if r.Method == http.MethodOptions && r.Header.Get("Access-Control-Request-Method") != "" {
+                     w.Header().Set("Access-Control-Allow-Methods",
+                              "OPTIONS, GET, POST, PUT, PATCH, DELETE")
                     w.Header().Set("Access-Control-Allow-Headers",
                              "Authorization, Content-Type")
         
