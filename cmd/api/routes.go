@@ -14,6 +14,9 @@ func (a *applicationDependencies)routes() http.Handler  {
    router.NotFound = http.HandlerFunc(a.notFoundResponse)
   // handle 405
    router.MethodNotAllowed = http.HandlerFunc(a.methodNotAllowedResponse)
+
+   // Health check route
+   router.HandlerFunc(http.MethodGet, "/v1/health", a.healthCheckHandler)
    
    // Customers routes
    router.HandlerFunc(http.MethodPost, "/v1/customers", a.createCustomerHandler)
@@ -79,7 +82,7 @@ func (a *applicationDependencies)routes() http.Handler  {
    
     router.Handler(http.MethodGet,"/v1/observability/customers/metrics", expvar.Handler())
 
-    // Request sent first to recoverPanic() then sent to rateLimit()
+     // Request sent first to recoverPanic() then sent to rateLimit()
      // finally it is sent to the router.
      // Compression is applied last (outermost) so it compresses the final response
      return  a.metrics(a.recoverPanic(a.enableCORS(a.rateLimit(a.compress(router)))))
